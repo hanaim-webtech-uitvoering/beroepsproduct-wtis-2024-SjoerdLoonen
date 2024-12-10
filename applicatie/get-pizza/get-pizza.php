@@ -4,14 +4,14 @@
     
     // Correct SQL query without GROUP BY
     $query = 'SELECT P.name as naam, P.price as prijs, P.type_id as id
-    FROM Products P
-    ORDER BY P.name';
+    FROM Product P
+    ORDER BY P.type_id';
     
     $data = $db->query($query);
     
     // Building the HTML table
     $html_table = '<table>';
-    $html_table = $html_table . '<tr><th>Id</th><th>Naam</th><th>Aantal stukken</th></tr>';
+    $html_table = $html_table . '<tr><th>Id</th><th>Naam</th><th>prijs</th></tr>';
     
     while ($rij = $data->fetch()) {
         $id = $rij['id'];

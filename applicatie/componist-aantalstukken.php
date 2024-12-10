@@ -5,26 +5,27 @@ require_once 'db_connectie.php';
 $db = maakVerbinding();
 
 // haal alle componisten op en tel het aantal stukken
-$query = 'select c.componistId as id, c.naam as naam, count(S.stuknr) as aantal
-          from Componist C left outer join Stuk S on C.componistId = S.componistId
-          group by C.componistId, C.naam
-          order by naam';
+$query = 'SELECT P.name as naam, P.price as prijs, P.type_id as id
+    FROM Product P
+    ORDER BY P.type_id';
 
 $data = $db->query($query);
 
-$html_table = '<table>';
-$html_table = $html_table . '<tr><th>Id</th><th>Naam</th><th>Aantal stukken</th></tr>';
+var_dump($data->fetchall())
 
-while($rij = $data->fetch()) {
-  $id = $rij['id'];
-  $naam = $rij['naam'];
-  $aantal = $rij['aantal'];
+// $html_table = '<table>';
+// $html_table = $html_table . '<tr><th>Id</th><th>Naam</th><th>Aantal stukken</th></tr>';
+
+// while($rij = $data->fetch()) {
+//   $id = $rij['id'];
+//   $naam = $rij['naam'];
+//   $aantal = $rij['aantal'];
   
-  $html_table = $html_table . "<tr><td>$id</td><td>$naam</td><td>$aantal</td></tr>";
-}
+//   $html_table = $html_table . "<tr><td>$id</td><td>$naam</td><td>$aantal</td></tr>";
+// }
 
-$html_table = $html_table . "</table>";
-?>
+// $html_table = $html_table . "</table>";
+?><!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,4 +52,4 @@ $html_table = $html_table . "</table>";
   echo ($html_table);
   ?>
 </body>
-</html>
+</html> -->
