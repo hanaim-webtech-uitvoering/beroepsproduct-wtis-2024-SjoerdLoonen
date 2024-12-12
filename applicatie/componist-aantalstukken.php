@@ -5,9 +5,13 @@ require_once 'db_connectie.php';
 $db = maakVerbinding();
 
 // haal alle componisten op en tel het aantal stukken
-$query = 'SELECT P.name as naam, P.price as prijs, P.type_id as id
-    FROM Product P
-    ORDER BY P.type_id';
+$query = 'SELECT P.name as naam, P.price as prijs, PT.name as product_type, STRING_AGG(I.name, \', \') as ingredienten
+          FROM Product P
+          JOIN ProductType PT ON P.type_id = PT.name
+          LEFT JOIN Product_Ingredient PI ON P.name = PI.product_name
+          LEFT JOIN Ingredient I ON PI.ingredient_name = I.name
+          GROUP BY P.name, P.price, PT.name
+          ORDER BY PT.name';
 
 $data = $db->query($query);
 
