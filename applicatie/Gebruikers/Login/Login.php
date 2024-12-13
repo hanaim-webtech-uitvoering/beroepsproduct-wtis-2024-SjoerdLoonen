@@ -1,3 +1,26 @@
+<?php
+session_start();
+require_once 'Login_dao.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $user = haalGebruikerOp($username);
+
+    if ($user && $password === $user['password']) {
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['first_name'] = $user['first_name'];
+        $_SESSION['last_name'] = $user['last_name'];
+        header('Location: ../MijnBestellingen.php');
+        exit;
+    } else {
+        $error = "Ongeldige gebruikersnaam of wachtwoord!";
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -5,7 +28,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Pagina</title>
-    <link rel="stylesheet" href="../Style/Style.css">
+    <link rel="stylesheet" href="../../Style/Style.css">
 </head>
 
 <body>
@@ -28,13 +51,20 @@
             <li><a href="#">Login</a></li>
         </ul>
     </nav>
+
     <div class="login-container">
         <h2>Login</h2>
-        <form action="../Klanten/KlantenHome.html" method="post">
+
+        <!-- Toon foutmelding indien login mislukt -->
+        <?php if (isset($error)): ?>
+            <p style="color: red;"><?php echo htmlspecialchars($error); ?></p>
+        <?php endif; ?>
+
+        <form action="Login.php" method="post">
             <div class="input-group">
-                <label for="text">Gebruikersnaam:</label>
+                <label for="username">Gebruikersnaam:</label>
                 <small>Minimaal 8 karakters</small>
-                <input type="text" id="text" name="text" placeholder="Gebruikersnaam" pattern="[a-zA-Z0-9]{8,}" required>
+                <input type="text" id="username" name="username" placeholder="Gebruikersnaam" pattern="[a-zA-Z0-9]{4,}" required>
             </div>
             <div class="input-group">
                 <label for="password">Wachtwoord:</label>
@@ -43,9 +73,11 @@
             </div>
             <button type="submit" class="login-btn">Inloggen</button>
         </form>
+
         <p>Nog geen account? Registreer <a class="link-style-login" href="registratie.html">hier</a></p>
         <p>Medewerker? Log dan <a class="link-style-login" href="../Werknemers/WerknemersLogin.html">hier</a> in.</p>
     </div>
+
     <footer>
         <div class="footer-content">
             <a class="link-style-login" href="PrivacyVerklaring.html">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>

@@ -1,26 +1,12 @@
 <?php
 
-require_once '../Database/db-connectie.php';
+require_once 'Menu_dao.php';  // Importeer de functies uit de nieuwe file
 
-$db = maakverbinding();
-
-$type_query = 'SELECT name FROM ProductType';
-$types = $db->query($type_query);
-
+$types = haalProductTypesOp();
 $selected_type = isset($_GET['type_id']) ? $_GET['type_id'] : null;
 
 if ($selected_type) {
-    $product_query = 'SELECT P.name as naam, P.price as prijs, PT.name as product_type, STRING_AGG(I.name, \', \') as ingredienten
-                      FROM Product P
-                      JOIN ProductType PT ON P.type_id = PT.name
-                      LEFT JOIN Product_Ingredient PI ON P.name = PI.product_name
-                      LEFT JOIN Ingredient I ON PI.ingredient_name = I.name
-                      WHERE PT.name = :type_id
-                      GROUP BY P.name, P.price, PT.name
-                      ORDER BY PT.name';
-    $product_stmt = $db->prepare($product_query);
-    $product_stmt->bindParam(':type_id', $selected_type);
-    $product_stmt->execute();
+    $producten = haalProductenOp($selected_type);
 }
 ?>
 
@@ -30,7 +16,7 @@ if ($selected_type) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../Style/Style.css">
+    <link rel="stylesheet" href="../../Style/Style.css">
     <title>Menukaart - Pizzeria Sole Machina</title>
 </head>
 
@@ -40,7 +26,21 @@ if ($selected_type) {
         <p>Kies uit onze heerlijke pizza's en plaats direct een bestelling!</p>
     </header>
 
-    <?php require_once '../Navbar.php'; ?>
+    <nav>
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="menu-icon">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </label>
+    <ul class="navbar" id="nav-links">
+        <li><a href="../Index.php">Home</a></li>
+        <li><a href="../Menu/Menu.php">Menu</a></li>
+        <li><a href="../Winkelmandje/Winkelmandje.php">Winkelmand</a></li>
+        <li><a href="../MijnBestellingen.php">Mijn Bestellingen</a></li>
+        <li><a href="../Login.php">Login</a></li>
+    </ul>
+</nav>
 
     <main>
         <nav class="navbar">
@@ -48,7 +48,7 @@ if ($selected_type) {
                 <?php
                 while ($type_row = $types->fetch(PDO::FETCH_ASSOC)) {
                     $type_name = htmlspecialchars($type_row['name']);
-                    echo '<li class="navbar" id="nav-links"><a href="?type_id=' . urlencode($type_name) . '">' . $type_name . '</a></li>';
+                    echo '<li><a href="?type_id=' . urlencode($type_name) . '">' . $type_name . '</a></li>';
                 }
                 ?>
             </ul>
@@ -59,7 +59,7 @@ if ($selected_type) {
                 <h2><?php echo htmlspecialchars($selected_type); ?></h2>
 
                 <?php
-                while ($row = $product_stmt->fetch(PDO::FETCH_ASSOC)) {
+                while ($row = $producten->fetch(PDO::FETCH_ASSOC)) {
                     echo '<div class="menu-item">';
                     echo '<h3>' . htmlspecialchars($row['naam']) . '</h3>';
 
@@ -68,7 +68,9 @@ if ($selected_type) {
                     }
 
                     echo '<p class="price">€' . number_format($row['prijs'], 2, ',', '.') . '</p>';
-                    echo '<form action="Winkelmandje.php" method="get">';
+                    echo '<form action="../Winkelmandje/Winkelmandje.php" method="post">';
+                    echo '<input type="hidden" name="product_name" value="' . htmlspecialchars($row['naam']) . '">';
+                    echo '<input type="hidden" name="price" value="' . htmlspecialchars($row['prijs']) . '">';
                     echo '<button class="order-btn">Bestel nu</button>';
                     echo '</form>';
                     echo '</div>';
@@ -80,8 +82,7 @@ if ($selected_type) {
         </section>
     </main>
 
-    <?php require_once '../Footer.php'; ?>
+    <?php require_once '../../Footer.php'; ?>
 
 </body>
-
 </html>

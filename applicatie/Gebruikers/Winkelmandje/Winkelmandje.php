@@ -1,3 +1,18 @@
+<?php
+require_once 'Winkelmandje_dao.php';
+session_start();
+
+$username = $_SESSION['username']; 
+$order = haalWinkelmandOp($username);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $product_name = $_POST['product_name'];
+    $quantity = $_POST['quantity'];
+
+    updateWinkelmand($username, $product_name, $quantity);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -5,7 +20,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Winkelmandje</title>
-    <link rel="stylesheet" href="../Style/Style.css">
+    <link rel="stylesheet" href="../../Style/Style.css">
 </head>
 
 <body>
@@ -23,13 +38,14 @@
         </label>
         <ul class="navbar" id="nav-links">
             <li><a href="Index.html">Home</a></li>
-            <li><a href="Menu.html">Menu</a></li>
+            <li><a href="../Menu/Menu.php">Menu</li>
             <li><a href="#">Winkelmand</a></li>
             <li><a href="MijnBestellingen.html">Mijn Bestellingen</a></li>
             <li><a href="Login.html">Login</a></li>
         </ul>
     </nav>
-    <form action="BestellingAfronden.html" method="post">
+
+    <form action="Winkelmandje.php" method="POST">
         <section class="purchase-list">
             <div class="purchase-header">
                 <h2>Productnaam</h2>
@@ -37,29 +53,28 @@
                 <h2>Hoeveelheid</h2>
                 <h2>Totaal</h2>
             </div>
-            <div class="purchase-item">
-                <span>Product A</span>
-                <span>€10,00</span>
-                <span>
-                    <input type="number" class="quantity-input" name="quantityA" value="1" min="1">
-                </span>
-                <span>€10,00</span>
-            </div>
-            <div class="purchase-item">
-                <span>Product B</span>
-                <span>€15,00</span>
-                <span>
-                    <input type="number" class="quantity-input" name="quantityB" value="1" min="1">
-                </span>
-                <span>€15,00</span>
-            </div>
+
+            <?php foreach ($order['producten'] as $product): ?>
+                <div class="purchase-item">
+                    <span><?php echo htmlspecialchars($product['product_name']); ?></span>
+                    <span>€<?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                    <span>
+                        <input type="number" class="quantity-input" name="quantity" value="<?php echo $product['quantity']; ?>" min="1">
+                        <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['product_name']); ?>">
+                    </span>
+                    <span>€<?php echo number_format($product['price'] * $product['quantity'], 2, ',', '.'); ?></span>
+                </div>
+            <?php endforeach; ?>
+
             <div class="purchase-summary">
                 <span><strong>Totaal:</strong></span>
-                <span>€25,00</span>
+                <span>€<?php echo number_format($order['total'], 2, ',', '.'); ?></span>
             </div>
+
             <button type="submit" class="complete-purchase-btn">Bestelling Afronden</button>
         </section>
     </form>
+
     <footer>
         <div class="footer-content">
             <a class="link-style-login" href="PrivacyVerklaring.html">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
@@ -74,5 +89,4 @@
     </footer>
 
 </body>
-
 </html>

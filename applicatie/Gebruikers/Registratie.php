@@ -1,3 +1,58 @@
+<?php
+require_once '../Database/db-connectie.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $firstname = trim($_POST['firstname']);
+    $lastname = trim($_POST['lastname']);
+    $street = trim($_POST['address']);
+    $city = trim($_POST['city']);
+    $postalCode = trim($_POST['postal-code']);
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+    $confirmPassword = trim($_POST['confirm-password']);
+
+    if ($password !== $confirmPassword) {
+        $error_message = "De wachtwoorden komen niet overeen.";
+    } else {
+        try {
+            $db = maakverbinding();
+
+            $query = "SELECT * FROM [User] WHERE username = :username";
+            $stmt = $db->prepare($query);
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $error_message = "De gebruikersnaam bestaat al. Kies een andere.";
+            } else {
+                // Hash het wachtwoord
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+                // Voeg de nieuwe gebruiker toe aan de database
+                $insertQuery = "
+                    INSERT INTO [User] (username, password, first_name, last_name, address, role) 
+                    VALUES (:username, :password, :firstname, :lastname, :address, 'klant')
+                ";
+                $stmt = $db->prepare($insertQuery);
+                $fullAddress = "$street, $postalCode, $city";  // Voeg volledige adres samen
+                $stmt->bindParam(':username', $username);
+                $stmt->bindParam(':password', $hashedPassword);
+                $stmt->bindParam(':firstname', $firstname);
+                $stmt->bindParam(':lastname', $lastname);
+                $stmt->bindParam(':address', $fullAddress);
+                $stmt->execute();
+
+                // Redirect naar de loginpagina na succesvolle registratie
+                header('Location: Login.php');
+                exit;
+            }
+        } catch (PDOException $e) {
+            echo "Fout bij het registreren: " . $e->getMessage();
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -13,6 +68,7 @@
         <h1 class="h1-header">Registreer</h1>
         <p>Registreer je hier om uw ervaring nog persoonlijker te maken!</p>
     </header>
+
     <nav>
         <input type="checkbox" id="menu-toggle">
         <label for="menu-toggle" class="menu-icon">
@@ -28,9 +84,13 @@
             <li><a href="Login.html">Login</a></li>
         </ul>
     </nav>
+
     <div class="login-container">
         <h2>Registreer</h2>
-        <form action="Login.html" method="post">
+        <?php if (isset($error_message)): ?>
+            <p style="color: red;"><?php echo htmlspecialchars($error_message); ?></p>
+        <?php endif; ?>
+        <form action="registratie.php" method="post">
             <div class="input-group">
                 <label for="firstname">Voornaam:</label>
                 <input type="text" id="firstname" name="firstname" placeholder="Bijv. Henk" pattern="[a-zA-Z\s]+" required>
@@ -38,10 +98,6 @@
             <div class="input-group">
                 <label for="lastname">Achternaam:</label>
                 <input type="text" id="lastname" name="lastname" placeholder="Bijv. Jansen" pattern="[a-zA-Z\s]+" required>
-            </div>
-            <div class="input-group">
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" placeholder="Bijv. Henkjansen@gmail.com" required>
             </div>
             <div class="input-group">
                 <label for="address">Straatnaam:</label>
@@ -74,8 +130,9 @@
             </div>
             <button type="submit" class="login-btn">Registreren</button>
         </form>
-        <p>Al een account? <a class="link-style-login" href="Login.html">Log hier in</a></p>
+        <p>Al een account? <a class="link-style-login" href="Login.php">Log hier in</a></p>
     </div>
+
     <footer>
         <div class="footer-content">
             <a class="link-style-login" href="PrivacyVerklaring.html">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
