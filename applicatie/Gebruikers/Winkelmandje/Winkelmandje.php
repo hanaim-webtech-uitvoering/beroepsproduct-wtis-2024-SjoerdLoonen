@@ -1,16 +1,20 @@
 <?php
-require_once 'Winkelmandje_dao.php';
-session_start();
+session_start();  // Start de sessie
 
-$username = $_SESSION['username']; 
-$order = haalWinkelmandOp($username);
+// Controleer of er producten in de winkelmand zitten
+if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
+    $order = $_SESSION['winkelmand'];
+    $total = 0;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $product_name = $_POST['product_name'];
-    $quantity = $_POST['quantity'];
-
-    updateWinkelmand($username, $product_name, $quantity);
+    // Bereken het totaalbedrag
+    foreach ($order as $product) {
+        $total += $product['price'] * $product['quantity'];
+    }
+} else {
+    $order = [];
+    $total = 0;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -29,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1 class="h1-header">Winkelmandje</h1>
         <p>Bekijk je winkelmandje en pas de hoeveelheden aan.</p>
     </header>
+
     <nav>
         <input type="checkbox" id="menu-toggle">
         <label for="menu-toggle" class="menu-icon">
@@ -37,11 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="bar"></span>
         </label>
         <ul class="navbar" id="nav-links">
-            <li><a href="Index.html">Home</a></li>
-            <li><a href="../Menu/Menu.php">Menu</li>
+            <li><a href="../Index.php">Home</a></li>
+            <li><a href="../Menu/Menu.php">Menu</a></li>
             <li><a href="#">Winkelmand</a></li>
-            <li><a href="MijnBestellingen.html">Mijn Bestellingen</a></li>
-            <li><a href="Login.html">Login</a></li>
+            <li><a href="../MijnBestellingen.php">Mijn Bestellingen</a></li>
+            <li><a href="../Login.php">Login</a></li>
         </ul>
     </nav>
 
@@ -54,13 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2>Totaal</h2>
             </div>
 
-            <?php foreach ($order['producten'] as $product): ?>
+            <?php foreach ($order as $product): ?>
                 <div class="purchase-item">
-                    <span><?php echo htmlspecialchars($product['product_name']); ?></span>
+                    <span><?php echo htmlspecialchars($product['name']); ?></span>
                     <span>€<?php echo number_format($product['price'], 2, ',', '.'); ?></span>
                     <span>
                         <input type="number" class="quantity-input" name="quantity" value="<?php echo $product['quantity']; ?>" min="1">
-                        <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['product_name']); ?>">
+                        <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
                     </span>
                     <span>€<?php echo number_format($product['price'] * $product['quantity'], 2, ',', '.'); ?></span>
                 </div>
@@ -68,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="purchase-summary">
                 <span><strong>Totaal:</strong></span>
-                <span>€<?php echo number_format($order['total'], 2, ',', '.'); ?></span>
+                <span>€<?php echo number_format($total, 2, ',', '.'); ?></span>
             </div>
 
             <button type="submit" class="complete-purchase-btn">Bestelling Afronden</button>
@@ -77,13 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <footer>
         <div class="footer-content">
-            <a class="link-style-login" href="PrivacyVerklaring.html">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
+            <a class="link-style-login" href="PrivacyVerklaring.php">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
             <div class="divider"></div>
-            <section id="contact">
-                <h2>Contact</h2>
-                <p><strong>Adres:</strong> Via Italia 24, 1234 AB, Pizza City</p>
-                <p><strong>Telefoon:</strong> +31 123 456 789</p>
-                <p><strong>Email:</strong> info@solemachina.nl</p>
+            <section>
+                <ul class="footer-links">
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">TikTok</a></li>
+                </ul>
             </section>
         </div>
     </footer>

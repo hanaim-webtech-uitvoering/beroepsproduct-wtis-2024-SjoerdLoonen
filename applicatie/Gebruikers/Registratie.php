@@ -25,16 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->rowCount() > 0) {
                 $error_message = "De gebruikersnaam bestaat al. Kies een andere.";
             } else {
-                // Hash het wachtwoord
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-                // Voeg de nieuwe gebruiker toe aan de database
                 $insertQuery = "
                     INSERT INTO [User] (username, password, first_name, last_name, address, role) 
-                    VALUES (:username, :password, :firstname, :lastname, :address, 'klant')
+                    VALUES (:username, :password, :firstname, :lastname, :address, 'client')
                 ";
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $db->prepare($insertQuery);
-                $fullAddress = "$street, $postalCode, $city";  // Voeg volledige adres samen
+                $fullAddress = "$street, $postalCode, $city";
                 $stmt->bindParam(':username', $username);
                 $stmt->bindParam(':password', $hashedPassword);
                 $stmt->bindParam(':firstname', $firstname);
@@ -42,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':address', $fullAddress);
                 $stmt->execute();
 
-                // Redirect naar de loginpagina na succesvolle registratie
-                header('Location: Login.php');
+                header('Location: Login/Login.php');
                 exit;
             }
         } catch (PDOException $e) {
@@ -100,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" id="lastname" name="lastname" placeholder="Bijv. Jansen" pattern="[a-zA-Z\s]+" required>
             </div>
             <div class="input-group">
-                <label for="address">Straatnaam:</label>
-                <input type="text" id="address" name="address" placeholder="Bijv. Johanstraat" pattern="[a-zA-Z\s]+" required>
+                <label for="address">Straatnaam + huisnummer:</label>
+                <input type="text" id="address" name="address" placeholder="Bijv. Johanstraat 26" pattern="[a-zA-Z\s]+" required>
             </div>
             <div class="input-group">
                 <label for="city">Stad:</label>

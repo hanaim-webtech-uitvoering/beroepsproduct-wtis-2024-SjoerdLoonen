@@ -8,11 +8,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $user = haalGebruikerOp($username);
 
-    if ($user && $password === $user['password']) {
+    // Use password_verify to check if the entered password matches the hashed password in the database
+    if ($user && password_verify($password, $user['password'])) {
         $_SESSION['username'] = $user['username'];
         $_SESSION['first_name'] = $user['first_name'];
         $_SESSION['last_name'] = $user['last_name'];
-        header('Location: ../MijnBestellingen.php');
+        header('Location: ../MijnBestellingen/MijnBestellingen.php');
         exit;
     } else {
         $error = "Ongeldige gebruikersnaam of wachtwoord!";
@@ -20,10 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="nl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="login-btn">Inloggen</button>
         </form>
 
-        <p>Nog geen account? Registreer <a class="link-style-login" href="registratie.html">hier</a></p>
+        <p>Nog geen account? Registreer <a class="link-style-login" href="../Registratie.php">hier</a></p>
         <p>Medewerker? Log dan <a class="link-style-login" href="../Werknemers/WerknemersLogin.html">hier</a> in.</p>
     </div>
 
@@ -91,5 +90,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </footer>
 </body>
-
 </html>

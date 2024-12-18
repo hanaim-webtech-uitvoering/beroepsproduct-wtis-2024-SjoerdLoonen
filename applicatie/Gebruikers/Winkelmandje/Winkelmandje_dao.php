@@ -26,7 +26,6 @@ function haalWinkelmandOp($username) {
     return ['producten' => $producten, 'total' => $total];
 }
 
-// Update de hoeveelheid van een product in het winkelmandje
 function updateWinkelmand($username, $product_name, $quantity) {
     $db = maakverbinding();
 
