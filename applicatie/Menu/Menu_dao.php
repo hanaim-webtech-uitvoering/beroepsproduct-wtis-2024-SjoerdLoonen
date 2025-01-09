@@ -1,8 +1,7 @@
 <?php
 
-require_once '../../Database/db-connectie.php';
+require_once '../Database/db-connectie.php';
 
-// Haal de producttypes op uit de database
 function haalProductTypesOp() {
     $db = maakverbinding();
     $type_query = 'SELECT name FROM ProductType';
@@ -10,7 +9,6 @@ function haalProductTypesOp() {
     return $types;
 }
 
-// Haal de producten op op basis van het geselecteerde producttype
 function haalProductenOp($selected_type) {
     $db = maakverbinding();
 

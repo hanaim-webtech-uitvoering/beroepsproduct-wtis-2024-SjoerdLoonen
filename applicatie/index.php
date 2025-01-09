@@ -1,19 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+    <link rel="stylesheet" href="Style/Style.css">
+    <title>Pizzeria Sole Machina Index</title>
 </head>
+
 <body>
-    <h1>It Works!</h1>
-    <?php echo('Hallo WT\'er, de webserver is online en PHP werkt.'); ?>
-    <br>
-    <br>
-    Alle technische informatie over je webserver vind je hier: <a href="phpinfo.php">http://<?=$_SERVER['HTTP_HOST']?>/phpinfo.php</a>
-    <br>
-    <br>
-    Een voorbeeld van een pagina die gegevens uit de database haalt vind je hier: <a href="componist-aantalstukken.php">http://<?=$_SERVER['HTTP_HOST']?>/componist-aantalstukken.php</a>
+    <header>
+        <h1 class="h1-header">Pizzeria Sole Machina</h1>
+        <p class="spin">De beste authentieke pizza's in de stad!</p>
+    </header>
+
+    <?php require_once 'Navbar.php' ?>
+
+    <section id="about">
+        <h2>Welkom bij Pizzeria Sole Machina</h2>
+        <p>Bij ons proef je de smaak van Italië in elke hap! Onze meester-pizzabakkers gebruiken enkel de beste
+            ingrediënten om de meest heerlijke en knapperige pizza's te bereiden. Of je nu houdt van een klassieke
+            Margherita of een speciale Quattro Stagioni, bij ons ben je aan het juiste adres.</p>
+        <a href="Menu/Menu.php" class="menu-btn">Bekijk ons menu</a>
+    </section>
+
+    <section id="hours">
+        <h2>Openingstijden</h2>
+        <ul>
+            <li>Maandag - Vrijdag: 12:00 - 22:00</li>
+            <li>Zaterdag: 14:00 - 23:00</li>
+            <li>Zondag: 14:00 - 21:00</li>
+        </ul>
+    </section>
+
+    <?php require_once 'Footer.php' ?>
+
 </body>
+
 </html>

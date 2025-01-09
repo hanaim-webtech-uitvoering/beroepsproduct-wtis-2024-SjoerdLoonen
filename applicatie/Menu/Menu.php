@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Style/Style.css">
+    <link rel="stylesheet" href="../Style/Style.css">
     <title>Menukaart - Pizzeria Sole Machina</title>
 </head>
 <body>
@@ -42,23 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1 class="h1-header">Menukaart - Pizzeria Sole Machina</h1>
         <p>Kies uit onze heerlijke pizza's en plaats direct een bestelling!</p>
     </header>
-<?php require_once '../../Navbar.php' ?>
-    <!-- <nav>
-        <input type="checkbox" id="menu-toggle">
-        <label for="menu-toggle" class="menu-icon">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </label>
-        <ul class="navbar" id="nav-links">
-            <li><a href="../Index.php">Home</a></li>
-            <li><a href="../Menu/Menu.php">Menu</a></li>
-            <li><a href="../Winkelmandje/Winkelmandje.php">Winkelmand</a></li>
-            <li><a href="../MijnBestellingen.php">Mijn Bestellingen</a></li>
-            <li><a href="../Login.php">Login</a></li>
-        </ul>
-    </nav> -->
 
+    <?php require_once '../Navbar.php' ?>
+    
     <main>
         <nav class="navbar">
             <ul>
@@ -99,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </main>
 
-    <?php require_once '../../Footer.php'; ?>
+    <?php require_once '../Footer.php'; ?>
 
 </body>
 </html>

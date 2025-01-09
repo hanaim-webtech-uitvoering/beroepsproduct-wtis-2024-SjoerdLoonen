@@ -1,6 +1,6 @@
 <?php
 
-require_once '../../Database/db-connectie.php';
+require_once '/Database/db-connectie.php';
 
 // Haal het winkelmandje op voor de gebruiker op basis van de gebruikersnaam
 function haalWinkelmandOp($username) {

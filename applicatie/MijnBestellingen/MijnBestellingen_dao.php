@@ -1,5 +1,5 @@
 <?php
-require_once '../../Database/db-connectie.php';
+require_once '../Database/db-Connectie.php';
 
 function haalBestellingenOp($username) {
     $db = maakverbinding();

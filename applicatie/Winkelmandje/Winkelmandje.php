@@ -1,5 +1,18 @@
 <?php
-session_start();  // Start de sessie
+session_start();
+
+// Controleer of het formulier is verzonden met een aangepaste hoeveelheid
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['quantity'], $_POST['product_name'])) {
+        $newQuantity = (int)$_POST['quantity'];
+        $productName = $_POST['product_name'];
+
+        // Controleer of de hoeveelheid geldig is en update het winkelmandje
+        if ($newQuantity > 0 && isset($_SESSION['winkelmand'][$productName])) {
+            $_SESSION['winkelmand'][$productName]['quantity'] = $newQuantity;
+        }
+    }
+}
 
 // Controleer of er producten in de winkelmand zitten
 if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
@@ -24,7 +37,7 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Winkelmandje</title>
-    <link rel="stylesheet" href="../../Style/Style.css">
+    <link rel="stylesheet" href="../Style/Style.css">
 </head>
 
 <body>
@@ -34,21 +47,7 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
         <p>Bekijk je winkelmandje en pas de hoeveelheden aan.</p>
     </header>
 
-    <nav>
-        <input type="checkbox" id="menu-toggle">
-        <label for="menu-toggle" class="menu-icon">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </label>
-        <ul class="navbar" id="nav-links">
-            <li><a href="../Index.php">Home</a></li>
-            <li><a href="../Menu/Menu.php">Menu</a></li>
-            <li><a href="#">Winkelmand</a></li>
-            <li><a href="../MijnBestellingen.php">Mijn Bestellingen</a></li>
-            <li><a href="../Login.php">Login</a></li>
-        </ul>
-    </nav>
+    <?php require_once '../Navbar.php' ?>
 
     <form action="Winkelmandje.php" method="POST">
         <section class="purchase-list">
@@ -66,6 +65,7 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
                     <span>
                         <input type="number" class="quantity-input" name="quantity" value="<?php echo $product['quantity']; ?>" min="1">
                         <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
+                        <button type="submit" class="status-button">Update</button>
                     </span>
                     <span>€<?php echo number_format($product['price'] * $product['quantity'], 2, ',', '.'); ?></span>
                 </div>
@@ -80,19 +80,7 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
         </section>
     </form>
 
-    <footer>
-        <div class="footer-content">
-            <a class="link-style-login" href="PrivacyVerklaring.php">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
-            <div class="divider"></div>
-            <section>
-                <ul class="footer-links">
-                    <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">TikTok</a></li>
-                </ul>
-            </section>
-        </div>
-    </footer>
+    <?php require_once '../Footer.php' ?>
 
 </body>
 </html>

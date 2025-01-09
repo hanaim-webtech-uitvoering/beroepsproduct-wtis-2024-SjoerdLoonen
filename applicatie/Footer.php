@@ -1,6 +1,6 @@
 <footer>
     <div class="footer-content">
-        <a class="link-style-login" href="PrivacyVerklaring.html">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
+        <a class="link-style-login" href="/PrivacyVerklaring.php">&copy; 2024 Pizzeria Sole Machina. Alle rechten voorbehouden.</a>
         <div class="divider"></div>
         <section id="contact">
             <h2>Contact</h2>
