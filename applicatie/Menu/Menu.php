@@ -1,7 +1,7 @@
 <?php
-require_once 'Menu_dao.php';  // Importeer de functies uit de nieuwe file
+require_once 'Menu_dao.php';
 
-session_start();  // Start de sessie
+session_start();
 
 $types = haalProductTypesOp();
 $selected_type = isset($_GET['type_id']) ? $_GET['type_id'] : null;
@@ -10,12 +10,10 @@ if ($selected_type) {
     $producten = haalProductenOp($selected_type);
 }
 
-// Voeg geselecteerd product toe aan de winkelmand (sessie) als de knop is ingedrukt
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_name = $_POST['product_name'];
     $price = $_POST['price'];
 
-    // Controleer of het product al in de winkelmand zit
     if (!isset($_SESSION['winkelmand'][$product_name])) {
         $_SESSION['winkelmand'][$product_name] = [
             'name' => $product_name,
@@ -23,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'quantity' => 1
         ];
     } else {
-        // Verhoog de hoeveelheid als het product al in de winkelmand zit
         $_SESSION['winkelmand'][$product_name]['quantity']++;
     }
 }

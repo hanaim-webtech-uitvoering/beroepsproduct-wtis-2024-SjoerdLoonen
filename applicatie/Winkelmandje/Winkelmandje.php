@@ -1,25 +1,21 @@
 <?php
 session_start();
 
-// Controleer of het formulier is verzonden met een aangepaste hoeveelheid
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['quantity'], $_POST['product_name'])) {
         $newQuantity = (int)$_POST['quantity'];
         $productName = $_POST['product_name'];
 
-        // Controleer of de hoeveelheid geldig is en update het winkelmandje
         if ($newQuantity > 0 && isset($_SESSION['winkelmand'][$productName])) {
             $_SESSION['winkelmand'][$productName]['quantity'] = $newQuantity;
         }
     }
 }
 
-// Controleer of er producten in de winkelmand zitten
 if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
     $order = $_SESSION['winkelmand'];
     $total = 0;
 
-    // Bereken het totaalbedrag
     foreach ($order as $product) {
         $total += $product['price'] * $product['quantity'];
     }
@@ -27,7 +23,6 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
     $order = [];
     $total = 0;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +44,7 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
 
     <?php require_once '../Navbar.php' ?>
 
-    <form action="Winkelmandje.php" method="POST">
+    <!-- <form action="../BestellingAfronden.php" method="POST"> -->
         <section class="purchase-list">
             <div class="purchase-header">
                 <h2>Productnaam</h2>
@@ -62,11 +57,13 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
                 <div class="purchase-item">
                     <span><?php echo htmlspecialchars($product['name']); ?></span>
                     <span>€<?php echo number_format($product['price'], 2, ',', '.'); ?></span>
+                    <form method="POST">
                     <span>
                         <input type="number" class="quantity-input" name="quantity" value="<?php echo $product['quantity']; ?>" min="1">
                         <input type="hidden" name="product_name" value="<?php echo htmlspecialchars($product['name']); ?>">
                         <button type="submit" class="status-button">Update</button>
                     </span>
+                </form>
                     <span>€<?php echo number_format($product['price'] * $product['quantity'], 2, ',', '.'); ?></span>
                 </div>
             <?php endforeach; ?>
@@ -75,7 +72,7 @@ if (isset($_SESSION['winkelmand']) && !empty($_SESSION['winkelmand'])) {
                 <span><strong>Totaal:</strong></span>
                 <span>€<?php echo number_format($total, 2, ',', '.'); ?></span>
             </div>
-
+            <form action="../BestellingAfronden/BestellingAfronden.php" method="POST">
             <button type="submit" class="complete-purchase-btn">Bestelling Afronden</button>
         </section>
     </form>

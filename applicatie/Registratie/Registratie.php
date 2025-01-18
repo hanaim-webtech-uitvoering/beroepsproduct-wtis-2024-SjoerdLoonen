@@ -13,46 +13,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
     $confirmPassword = trim($_POST['confirm-password']);
     
-    // Server-side validatie
-    if(empty($firstname)) {
+    if (empty($firstname)) {
         $errors['firstname'] = "Voer een voornaam in.";
-    }
-
-    if (!preg_match('/^[a-zA-Z\s]+$/', $firstname)) {
+    } elseif (!preg_match('/^[a-zA-Z\s]+$/', $firstname)) {
         $errors['firstname'] = "Voer een geldige voornaam in.";
     }
     
-    if(empty($lastname)) {
+    if (empty($lastname)) {
         $errors['lastname'] = "Voer een achternaam in";
-    }
-
-    if (!preg_match('/^[a-zA-Z\s]+$/', $lastname)) {
+    } elseif (!preg_match('/^[a-zA-Z\s]+$/', $lastname)) {
         $errors['lastname'] = "Voer een geldige achternaam in.";
     }
 
-    
-    
-    if (!preg_match('/^[a-zA-Z\s]+\s\d+[a-zA-Z]?$/', $street)) {
+    if (empty($street)) {
+        $errors['address'] = "Voer een straatnaam en huisnummer in";
+    } elseif (!preg_match('/^[a-zA-Z\s]+\s\d+[a-zA-Z]?$/', $street)) {
         $errors['address'] = "Voer een geldige straatnaam en huisnummer in.";
     }
-    
-    if (!preg_match('/^[a-zA-Z\s]+$/', $city)) {
+
+    if (empty($city)) {
+        $errors['city'] = "Voer een stad in";
+    } elseif (!preg_match('/^[a-zA-Z\s]+$/', $city)) {
         $errors['city'] = "Voer een geldige stad in.";
     }
     
-    if (!preg_match('/^[0-9]{4}[A-Z]{2}$/', $postalCode)) {
+    if (empty($postalCode)) {
+        $errors['postal-code'] = "Voer een postcode in";
+    } elseif (!preg_match('/^[0-9]{4}[A-Z]{2}$/', $postalCode)) {
         $errors['postal-code'] = "Voer een geldige postcode in (bijv. 1234AB).";
     }
-    
-    if (!preg_match('/^[a-zA-Z0-9]{8,}$/', $username)) {
+
+    if (empty($username)) {
+        $errors['username'] = "Voer een gebruikersnaam in";
+    } elseif (!preg_match('/^[a-zA-Z0-9]{8,}$/', $username)) {
         $errors['username'] = "Voer een geldige gebruikersnaam in (minimaal 8 karakters).";
     }
-    
-    if (!preg_match('/^[a-zA-Z0-9]{8,16}$/', $password)) {
+
+    if (empty($password)) {
+        $errors['password'] = "Voer een wachtwoord in";
+    } elseif (!preg_match('/^[a-zA-Z0-9]{8,16}$/', $password)) {
         $errors['password'] = "Voer een geldig wachtwoord in (8 tot 16 karakters).";
     }
-    
-    if ($password !== $confirmPassword) {
+
+    if (empty($confirmPassword)) {
+        $errors['confirm-password'] = "Bevestig uw wachtwoord";
+    } elseif ($password !== $confirmPassword) {
         $errors['confirm-password'] = "De wachtwoorden komen niet overeen.";
     }
     
@@ -73,7 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+if (!empty($errors)) {
+    echo '<ul class="error-messages">';
+    foreach ($errors as $field => $error) {
+        echo "<li><strong>$field:</strong> $error</li>";
+    }
+    echo '</ul>';
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="nl">

@@ -2,14 +2,14 @@
 session_start();
 require_once 'MijnBestellingen_dao.php';
 
-if (!isset($_SESSION['username'])) {
-    header('Location: /Login/Login.php');
-    exit;
+$isLoggedIn = isset($_SESSION['username']);
+
+if ($isLoggedIn) {
+    $username = $_SESSION['username'];
+    $orders = haalBestellingenOp($username);
+} else {
+    $orders = isset($_SESSION['confirmed_orders']) ? $_SESSION['confirmed_orders'] : [];
 }
-
-$username = $_SESSION['username'];
-
-$orders = haalBestellingenOp($username);
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +42,20 @@ $orders = haalBestellingenOp($username);
         <?php foreach ($orders as $order): ?>
             <div class="order-item">
                 <span><?php echo htmlspecialchars($order['order_id']); ?></span>
-                <span><?php echo htmlspecialchars($order['product_details']); ?></span>
+                
+                <ul class="order-list">
+                    <?php if (!empty($order['product_details'])): ?>
+                        <?php
+                        $productArray = explode(', ', $order['product_details']);
+                        foreach ($productArray as $productDetails):
+                            echo "<li>" . htmlspecialchars($productDetails) . "</li>";
+                        endforeach;
+                        ?>
+                    <?php else: ?>
+                        <li>Geen producten gevonden.</li>
+                    <?php endif; ?>
+                </ul>
+
                 <span><?php echo htmlspecialchars($order['datetime']); ?></span>
                 <span><?php echo htmlspecialchars($order['status']); ?></span>
                 <span><?php echo htmlspecialchars($order['address']); ?></span>

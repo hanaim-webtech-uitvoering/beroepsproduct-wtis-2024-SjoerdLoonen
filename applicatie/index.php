@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="nl">
 
@@ -17,7 +21,13 @@
     <?php require_once 'Navbar.php' ?>
 
     <section id="about">
-        <h2>Welkom bij Pizzeria Sole Machina</h2>
+        <h2>
+            <?php if (isset($_SESSION['username'])): ?>
+                Welkom bij Pizzeria Sole Machina, <?php echo htmlspecialchars($_SESSION['username']); ?>!
+            <?php else: ?>
+                Welkom bij Pizzeria Sole Machina
+            <?php endif; ?>
+        </h2>
         <p>Bij ons proef je de smaak van Italië in elke hap! Onze meester-pizzabakkers gebruiken enkel de beste
             ingrediënten om de meest heerlijke en knapperige pizza's te bereiden. Of je nu houdt van een klassieke
             Margherita of een speciale Quattro Stagioni, bij ons ben je aan het juiste adres.</p>
