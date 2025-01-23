@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['confirm-password'] = "De wachtwoorden komen niet overeen.";
     }
     
-    // Als er geen fouten zijn, probeer te registreren
     if (empty($errors)) {
         try {
             if (checkUsernameExists($username)) {
