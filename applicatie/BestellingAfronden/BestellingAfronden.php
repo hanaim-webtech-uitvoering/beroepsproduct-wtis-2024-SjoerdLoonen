@@ -1,37 +1,48 @@
 <?php
 session_start();
 
+require_once 'BestellingAfronden_dao.php';
+
 if (!isset($_SESSION['username'])) {
-    header("Location: ../Login/login.php");
+    echo "Je moet ingelogd zijn om een bestelling te bevestigen.";
     exit;
 }
 
-require_once 'Bestelling_dao.php';
+$order = isset($_SESSION['winkelmand']) ? $_SESSION['winkelmand'] : [];
+if (empty($order)) {
+    echo "Je winkelmand is leeg.";
+    exit;
+}
 
 $user = $_SESSION['username'];
+$userData = getUserData($user);
+$fullName = $userData['full_name'];
+$address = $userData['address'];
+$personnelUsername = getRandomPersonnelUsername();
 
-$order = isset($_SESSION['winkelmand']) ? $_SESSION['winkelmand'] : [];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['bevestig_bestelling'])) {
+    $newOrderId = placeOrder($user, $fullName, $personnelUsername, $address, $order);
+    unset($_SESSION['winkelmand']);
+    echo "Bestelling succesvol toegevoegd. Uw winkelmandje is nu leeg.";
+}
+
 $total = 0;
 foreach ($order as $product) {
     $total += $product['price'] * $product['quantity'];
 }
 
-$userData = getUserData($user);
-$fullName = $userData['full_name'];
-$address = $userData['address'];
-
-$personnelUsername = getRandomPersonnelUsername();
-
 ?>
 
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bestelling Bevestigen</title>
     <link rel="stylesheet" href="../Style/Style.css">
 </head>
+
 <body>
     <header>
         <h1 class="h1-header">Bevestig uw bestelling</h1>
@@ -65,7 +76,7 @@ $personnelUsername = getRandomPersonnelUsername();
             </div>
 
             <?php if (!empty($order)): ?>
-                <form action="../MijnBestellingen/MijnBestellingen.php" method="post">
+                <form action="" method="post">
                     <button type="submit" name="bevestig_bestelling" class="confirm-btn">Bevestig bestelling</button>
                 </form>
             <?php else: ?>
@@ -77,4 +88,5 @@ $personnelUsername = getRandomPersonnelUsername();
     <?php require_once '../Footer.php' ?>
 
 </body>
+
 </html>

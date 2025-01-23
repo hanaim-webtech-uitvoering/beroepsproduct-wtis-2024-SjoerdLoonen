@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($username)) {
         $errors['username'] = "Voer een gebruikersnaam in.";
-    } elseif (!preg_match('/^[a-zA-Z0-9]{8,}$/', $username)) {
+    } elseif (!preg_match('/^[a-zA-Z0-9]{4,}$/', $username)) {
         $errors['username'] = "Gebruikersnaam moet minimaal 8 karakters bevatten.";
     }
 
@@ -21,15 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $user = haalGebruikerOp($username, 'client');
+        $user = haalGebruikerOp($username, 'personnel');
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['username'] = $user['username'];
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['last_name'] = $user['last_name'];
-            $_SESSION['role'] = 'client';
+            $_SESSION['role'] = 'personnel';
 
-            header('Location: ../MijnBestellingen/MijnBestellingen.php');
+            header('Location: ../Index.php');
             exit;
         } else {
             $errors['login'] = "Het wachtwoord of gebruikersnaam is incorrect.";
@@ -43,14 +43,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Pagina</title>
+    <title>Werknemer Login Pagina</title>
     <link rel="stylesheet" href="../Style/Style.css">
 </head>
 
 <body>
     <header>
-        <h1 class="h1-header">Login</h1>
-        <p>Log hier in om uw ervaring nog persoonlijker te maken!</p>
+        <h1 class="h1-header">Werknemer Login</h1>
+        <p>Log hier in om toegang te krijgen tot uw werkruimte.</p>
     </header>
 
     <?php require_once '../Navbar.php'; ?>
@@ -66,24 +66,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         <?php endif; ?>
 
-        <form action="Login.php" method="post">
+        <form action="WerknemerLogin.php" method="post">
             <div class="input-group">
                 <label for="username">Gebruikersnaam:</label>
                 <small>Minimaal 8 karakters</small>
-                <input type="text" id="username" name="username" placeholder="Gebruikersnaam" pattern="[a-zA-Z0-9]{8,}" required value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>">
+                <input type="text" id="username" name="username" placeholder="Gebruikersnaam" pattern="[a-zA-Z0-9]{4,}" required value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>">
             </div>
             <div class="input-group">
                 <label for="password">Wachtwoord:</label>
                 <small>8 - 16 karakters</small>
-                <input type="password" id="password" name="password" placeholder="Wachtwoord" pattern="[a-zA-Z0-9]{8,16}" required>
+                <input type="password" id="password" name="password" placeholder="Wachtwoord" required>
             </div>
             <button type="submit" class="login-btn">Inloggen</button>
         </form>
 
         <p>Nog geen account? Registreer <a class="link-style-login" href="../Registratie/Registratie.php">hier</a></p>
-        <p>Medewerker? Log dan <a class="link-style-login" href="WerknemerLogin.php">hier</a> in.</p>
+        <p>Gebruiker? Log dan <a class="link-style-login" href="Login.php">hier</a> in.</p>
     </div>
 
     <?php require_once '../Footer.php'; ?>
+
 </body>
 </html>
